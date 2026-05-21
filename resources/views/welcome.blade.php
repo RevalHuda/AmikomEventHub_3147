@@ -113,4 +113,56 @@
             @endforeach
         </div>
     </section>
+
+    <!-- Partners Section -->
+    <section id="partners" class="max-w-7xl mx-auto px-6 py-20 bg-slate-50 rounded-3xl">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-extrabold mb-2">Sponsor & Partner Kami</h2>
+            <p class="text-slate-500 font-medium max-w-2xl mx-auto">Kami berkolaborasi dengan berbagai perusahaan terkemuka untuk memberikan pengalaman terbaik kepada Anda</p>
+        </div>
+
+        @if ($partners->count() > 0)
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                @foreach ($partners as $partner)
+                    <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition flex items-center justify-center min-h-[150px]">
+                        <img src="{{ $partner->logo_url }}" alt="{{ $partner->name }}"
+                            class="w-full h-full object-contain max-h-[120px]" title="{{ $partner->name }}">
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <div class="text-center py-12">
+                <p class="text-slate-500 text-lg">Belum ada partner yang terdaftar</p>
+            </div>
+        @endif
+    </section>
+
+    <!-- Categories Showcase -->
+    <section id="categories" class="max-w-7xl mx-auto px-6 py-20">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-extrabold mb-2">Jenis Event yang Tersedia</h2>
+            <p class="text-slate-500 font-medium">AmikomEventHub menyediakan berbagai kategori event untuk semua kebutuhan Anda</p>
+        </div>
+
+        @if ($categories->count() > 0)
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach ($categories as $category)
+                    <a href="/?category={{ $category->slug }}"
+                        class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-8 border border-indigo-100 hover:shadow-lg hover:border-indigo-300 transition">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-slate-900">{{ $category->name }}</h3>
+                            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                            </svg>
+                        </div>
+                        <p class="text-slate-600 text-sm">Temukan {{ count($category->events) }} event di kategori ini</p>
+                    </a>
+                @endforeach
+            </div>
+        @else
+            <div class="text-center py-12">
+                <p class="text-slate-500 text-lg">Belum ada kategori yang tersedia</p>
+            </div>
+        @endif
+    </section>
 @endsection

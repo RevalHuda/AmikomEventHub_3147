@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Event;
+use App\Models\Partner;
 use Illuminate\Http\Request;
 
 class EventController extends Controller
@@ -11,6 +12,7 @@ class EventController extends Controller
     public function index(Request $request)
     {
         $categories = Category::all();
+        $partners = Partner::all();
         $eventsQuery = Event::with('category')->latest();
 
         if ($request->filled('category')) {
@@ -22,7 +24,7 @@ class EventController extends Controller
 
         $events = $eventsQuery->get();
 
-        return view('welcome', compact('categories', 'events'));
+        return view('welcome', compact('categories', 'events', 'partners'));
     }
 
     public function show()
