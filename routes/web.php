@@ -2,19 +2,23 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EventController as AdminEventController;
-use App\Http\Controllers\Admin\PartnerController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\PartnerController;
+use App\Http\Controllers\Admin\TransactionController;
+use App\Http\Controllers\Admin\AdminAuthController;
 
 // Halaman Beranda (Home)
 Route::get('/', [EventController::class, 'index'])->name('welcome');
 
 // Halaman Detail Event
-Route::get('/event-detail', [EventController::class, 'show'])->name('event-detail');
+Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
 
-// Halaman Checkout
-Route::get('/checkout', [EventController::class, 'checkout'])->name('checkout');
+// Routes Checkout
+Route::get('/checkout/{event}', [CheckoutController::class, 'create'])->name('checkout.create');
+Route::post('/checkout/{event}', [CheckoutController::class, 'store'])->name('checkout.store');
 
 // Halaman Ticket (Setelah Bayar)
 Route::get('/ticket', function () {
@@ -22,20 +26,24 @@ Route::get('/ticket', function () {
 })->name('ticket');
 
 
-Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+// Redirect generic /login to admin login
+Route::get('/login', function () {
+    return redirect()->route('admin.login');
+})->name('login');
 
-    // Halaman Dashboard Admin (URL: /admin)
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+// Grouping untuk URL berawalan /admin
+Route::prefix('admin')->name('admin.')->group(function () {
+    // Rute Login bebas akses
+    Route::get('login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('login', [AuthController::class, 'login'])->name('login.post');
+    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
-    // Halaman Kelola Event Admin (URL: /admin/events)
-    Route::resource('events', AdminEventController::class)->except(['show']);
-
-    // Halaman Kelola Kategori Admin (URL: /admin/categories)
-    Route::resource('categories', CategoryController::class)->except(['show']);
-
-    // Halaman Kelola Partner Admin (URL: /admin/partners)
-    Route::resource('partners', PartnerController::class)->except(['show']);
-
-    // Halaman Laporan Transaksi Admin (URL: /admin/transactions)
-    Route::get('/transactions', [AdminEventController::class, 'transactions'])->name('transactions.index');
+    // Mengamankan Route Administrasi di balik tembok (Middleware)
+    Route::middleware(['auth', 'admin'])->group(function () {
+        Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::resource('events', AdminEventController::class);
+        Route::resource('categories', CategoryController::class);
+        Route::resource('partners', PartnerController::class);
+        Route::get('transactions', [TransactionController::class, 'index'])->name('transactions.index');
+    });
 });

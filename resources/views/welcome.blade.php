@@ -86,7 +86,8 @@
                 <div
                     class="group bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden">
                     <div class="relative overflow-hidden aspect-[4/3]">
-                        <img src="https://placehold.co/800x600" alt="{{ $event->title }}"
+                        <img src="{{ $event->poster_path ? asset('storage/' . $event->poster_path) : 'https://placehold.co/800x600' }}"
+                            alt="{{ $event->title }}"
                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         <div
                             class="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur rounded-lg text-xs font-bold uppercase text-indigo-600">
@@ -104,7 +105,7 @@
                         <div class="flex justify-between items-center pt-4 border-t">
                             <span class="text-2xl font-black text-indigo-600">Rp
                                 {{ number_format($event->price, 0, ',', '.') }}</span>
-                            <a href="{{ url('event-detail') }}"
+                            <a href="{{ route('events.show', $event->id) }}"
                                 class="px-5 py-2 bg-indigo-50 text-indigo-600 rounded-xl font-bold hover:bg-indigo-600 hover:text-white transition">Lihat
                                 Detail</a>
                         </div>
@@ -125,8 +126,11 @@
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 @foreach ($partners as $partner)
                     <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition flex items-center justify-center min-h-[150px]">
-                        <img src="{{ $partner->logo_url }}" alt="{{ $partner->name }}"
-                            class="w-full h-full object-contain max-h-[120px]" title="{{ $partner->name }}">
+                        <div class="flex flex-col items-center w-full">
+                            <img src="{{ $partner->logo_url }}" alt="{{ $partner->name }}"
+                                class="w-full h-full object-contain max-h-[120px] mb-2" title="{{ $partner->name }}">
+                            <span class="block text-center text-slate-700 font-bold text-sm mt-2">{{ $partner->name }}</span>
+                        </div>
                     </div>
                 @endforeach
             </div>

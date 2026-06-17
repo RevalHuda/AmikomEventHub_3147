@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Event;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class EventController extends Controller
 {
@@ -26,14 +27,19 @@ class EventController extends Controller
     {
         // Menerapkan validasi data request dari pengguna
         $data = $request->validate([
-            'category_id' => 'required',
+            'category_id' => 'required|exists:categories,id',
             'title' => 'required|string|max:255',
-            'description' => 'required|string',
+            'description' => 'nullable|string',
             'date' => 'required|date',
             'location' => 'required|string|max:255',
-            'price' => 'required|numeric',
-            'stock' => 'required|numeric'
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|numeric|min:1',
+            'poster' => 'nullable|image|max:2048'
         ]);
+
+        if ($request->hasFile('poster')) {
+            $data['poster_path'] = $request->file('poster')->store('posters', 'public');
+        }
 
         // Menyimpan data yang telah divalidasi ke dalam tabel menggunakan Model
         Event::create($data);
@@ -50,15 +56,22 @@ class EventController extends Controller
     public function update(Request $request, Event $event)
     {
         $data = $request->validate([
-            'category_id' => 'required',
+            'category_id' => 'required|exists:categories,id',
             'title' => 'required|string|max:255',
-            'description' => 'required|string',
+            'description' => 'nullable|string',
             'date' => 'required|date',
             'location' => 'required|string|max:255',
-
-            'price' => 'required|numeric',
-            'stock' => 'required|numeric'
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|numeric|min:1',
+            'poster' => 'nullable|image|max:2048'
         ]);
+
+        if ($request->hasFile('poster')) {
+            if ($event->poster_path) {
+                Storage::disk('public')->delete($event->poster_path);
+            }
+            $data['poster_path'] = $request->file('poster')->store('posters', 'public');
+        }
 
         $event->update($data);
 
