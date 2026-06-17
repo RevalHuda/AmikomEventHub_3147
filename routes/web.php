@@ -8,7 +8,7 @@ use App\Http\Controllers\Admin\EventController as AdminEventController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\PartnerController;
 use App\Http\Controllers\Admin\TransactionController;
-use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Admin\AuthController;
 
 // Halaman Beranda (Home)
 Route::get('/', [EventController::class, 'index'])->name('welcome');
