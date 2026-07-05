@@ -19,6 +19,18 @@ Route::get('/events/{event}', [EventController::class, 'show'])->name('events.sh
 // Routes Checkout
 Route::get('/checkout/{event}', [CheckoutController::class, 'create'])->name('checkout.create');
 Route::post('/checkout/{event}', [CheckoutController::class, 'store'])->name('checkout.store');
+Route::get('/payment/{order_id}', [CheckoutController::class, 'payment'])->name('checkout.payment');
+Route::get('/success/{order_id}', [CheckoutController::class, 'success'])->name('checkout.success');
+
+// Route untuk testing - update status transaksi (hapus di production!)
+Route::get('/test/update-status/{order_id}', function($order_id) {
+    $transaction = \App\Models\Transaction::where('order_id', $order_id)->first();
+    if ($transaction) {
+        $transaction->update(['status' => 'success']);
+        return "Status transaksi $order_id berhasil diubah menjadi success!";
+    }
+    return "Transaksi tidak ditemukan";
+});
 
 // Halaman Ticket (Setelah Bayar)
 Route::get('/ticket', function () {
